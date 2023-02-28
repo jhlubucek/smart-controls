@@ -10,15 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Light {
+public class Sensor {
 
     @GeneratedValue
     private int id;
     private String name;
-    private String topicState;
-    private String topicBrightness;
-    private int brightnessMaxValue;
-    private int brightnessMinValue;
-    private boolean lastState;
-    private int lastBrightness;
+    private String topic;
+    private String unit;
 }

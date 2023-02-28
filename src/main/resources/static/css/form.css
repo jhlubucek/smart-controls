@@ -1,0 +1,25 @@
+/* Purple top bar styles */
+.top-bar {
+    background-color: #9b4dca;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+.top-bar h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.edit-button {
+    background-color: #fff;
+    color: #9b4dca;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}

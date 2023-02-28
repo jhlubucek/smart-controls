@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <title>Smart Home Control</title>
+  <link rel="stylesheet" th:href="@{/css/form.css}" />
+</head>
+<body>
+<div class="top-bar">
+  <h1>Smart Home Control</h1>
+  <button class="edit-button">Edit</button>
+</div>
+<form>
+  <div class="input-field">
+    <input type="text" id="state_topic" name="state_topic" value="state_topic">
+    <label for="state_topic">State Topic</label>
+  </div>
+  <div class="input-field">
+    <input type="text" id="brightness_topic" name="brightness_topic" value="brightness_topic">
+    <label for="brightness_topic">Brightness Topic</label>
+  </div>
+  <div class="input-field">
+    <input type="number" id="brightness_max" name="brightness_max" value="100">
+    <label for="brightness_max">Brightness Maximum</label>
+  </div>
+  <div class="input-field">
+    <input type="number" id="brightness_min" name="brightness_min" value="0">
+    <label for="brightness_min">Brightness Minimum</label>
+  </div>
+  <div class="input-field">
+    <input type="text" id="name" name="name" value="name">
+    <label for="name">Name</label>
+  </div>
+  <button class="btn waves-effect waves-light" type="submit" name="action">Submit</button>
+</form>
+</body>
+</html>
