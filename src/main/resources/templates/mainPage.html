@@ -204,7 +204,7 @@
   </div>
   <div class="light-switch">
     <label class="switch">
-      <input type="checkbox" th:checked="${light.isLastState}">
+      <input type="checkbox" th:checked="${light.isLastState}" th:id="'light-switch-' + ${light.id}" th:onclick="'callEndpoint(' + ${light.id} + ')'">
       <span class="slider round"></span>
     </label>
   </div>
@@ -224,6 +224,20 @@
   </div>
 
 </div>
+<script>
+
+  function callEndpoint(id) {
+    const checkbox = document.getElementById('light-switch-'+id);
+    const isChecked = checkbox.checked ? 1 : 0;
+    const endpointUrl = `http://localhost:8090/light/${id}/state/${isChecked}`;
+
+    fetch(endpointUrl,{
+      method: "POST"})
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+  }
+</script>
 
 <script th:inline="javascript" th:each="sensor : ${sensors}">
   /*<![CDATA[*/

@@ -2,10 +2,11 @@ package com.jhlubucek.smart.controls;
 
 import com.jhlubucek.smart.controls.entity.Light;
 import com.jhlubucek.smart.controls.entity.Sensor;
+import com.jhlubucek.smart.controls.sevices.MqttService;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.stereotype.Controller;
 
@@ -15,7 +16,17 @@ import java.util.List;
 @Controller
 public class DemoController
 {
-    @RequestMapping("/")
+    @Autowired
+    private MqttService mqttService;
+
+    @RequestMapping(value = "/light/{id}/state/{state}", method = RequestMethod.POST)
+    @ResponseBody
+    public  String updateLight(@PathVariable("id") int id, @PathVariable("state") int state) throws MqttException {
+        mqttService.publish("/test/topic", Integer.toString(state), 0, false);
+        return "ok";
+    };
+
+    @RequestMapping("/dashboard")
     public ModelAndView index()
     {
         ModelAndView modelAndView = new ModelAndView();
