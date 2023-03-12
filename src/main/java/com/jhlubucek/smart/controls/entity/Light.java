@@ -17,8 +17,9 @@ public class Light {
     private String name;
     private String topicState;
     private String topicBrightness;
-    private int brightnessMaxValue;
-    private int brightnessMinValue;
-    private boolean lastState;
-    private int lastBrightness;
+    private int minBrightness;
+    private int maxBrightness;
+    private boolean currentState;
+    private int currentBrightness;
+
 }

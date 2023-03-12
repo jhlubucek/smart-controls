@@ -26,6 +26,10 @@ public class MqttService {
         });
     }
 
+    public void subscribe(String var1, IMqttMessageListener var2) throws MqttException {
+        mqttClient.subscribe(var1, var2);
+    }
+
     public void publish(final String topic, final String payload, int qos, boolean retained)
             throws MqttPersistenceException, MqttException {
 
@@ -46,10 +50,19 @@ public class MqttService {
 
     @PostConstruct
     public void sub() throws MqttException, InterruptedException {
+        System.out.println("pica ale uz");
         if (!mqttClient.isConnected()){
             mqttClient.connect(mqttConnectOptions);
         }
         this.subscribe("myTopic");
         this.publish("/test/topic", "hello from java", 0, false);
+    }
+
+    public boolean isConnected(){
+        return mqttClient.isConnected();
+    }
+
+    public void connect() throws MqttException {
+        mqttClient.connect(mqttConnectOptions);
     }
 }

@@ -15,8 +15,7 @@
   <h1>Smart Home Control</h1>
   <button class="edit-button">Edit</button>
 </div>
-<form th:action="@{/edit_light_process_form}" th:object="${light}" method="post">
-  <input type="hidden" th:field="*{id}">
+<form th:action="@{/add_light_process_form}" th:object="${light}" method="post">
   <div class="input-field">
     <input type="text" th:field="*{name}">
     <label>Name</label>

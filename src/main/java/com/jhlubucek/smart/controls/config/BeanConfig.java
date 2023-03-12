@@ -1,5 +1,6 @@
 package com.jhlubucek.smart.controls.config;
 
+import com.jhlubucek.smart.controls.sevices.DevicesDataService;
 import com.jhlubucek.smart.controls.sevices.MqttService;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -19,11 +20,14 @@ import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannel
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.integration.mqtt.support.MqttHeaders;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.thymeleaf.spring6.SpringTemplateEngine;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class BeanConfig {
@@ -94,23 +98,29 @@ public class BeanConfig {
 //    }
 
     @Bean
+    public DevicesDataService devicesDataService(){
+        return new DevicesDataService();
+    }
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
     public IMqttClient mqttClient(@Value("${mqtt.clientId}") String clientId,
                                   @Value("${mqtt.hostname}") String hostname, @Value("${mqtt.port}") int port) throws MqttException {
 
-        IMqttClient mqttClient = new MqttClient("tcp://" + hostname + ":" + port, clientId);
-
-        mqttClient.connect(mqttConnectOptions());
-
-        return mqttClient;
+        return new MqttClient("tcp://" + hostname + ":" + port, clientId);
     }
 
     @Bean
     @ConfigurationProperties(prefix = "mqtt")
-    public MqttConnectOptions mqttConnectOptions() {
+    public MqttConnectOptions mqttConnectOptions(@Value("${mqtt.username}") String userName, @Value("${mqtt.password}") String password) {
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setUserName("mqtt-user");
-        options.setPassword("kokos123".toCharArray());
+        if (userName != null && password != null){
+            options.setUserName(userName);
+            options.setPassword(password.toCharArray());
+        }
         return options;
-//        return new MqttConnectOptions();
     }
 }
