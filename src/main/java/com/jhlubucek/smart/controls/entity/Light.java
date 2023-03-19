@@ -21,5 +21,6 @@ public class Light {
     private int maxBrightness;
     private boolean currentState;
     private int currentBrightness;
+    private int dashboardId;
 
 }

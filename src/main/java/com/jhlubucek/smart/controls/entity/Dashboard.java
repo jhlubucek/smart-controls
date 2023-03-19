@@ -6,18 +6,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Sensor {
+public class Dashboard {
 
+    @GeneratedValue
     private int id;
     private String name;
-    private String topic;
-    private String unit;
-    private List<SensorReading> readings;
-    private int dashboardId;
 }

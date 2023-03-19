@@ -10,6 +10,7 @@ public class SensorRowMapper implements RowMapper<Sensor> {
     public Sensor mapRow(ResultSet rs, int rowNum) throws SQLException {
         Sensor sensor = new Sensor();
         sensor.setId(rs.getInt("id"));
+        sensor.setDashboardId(rs.getInt("dashboard_id"));
         sensor.setName(rs.getString("name"));
         sensor.setTopic(rs.getString("topic"));
         sensor.setUnit(rs.getString("unit"));

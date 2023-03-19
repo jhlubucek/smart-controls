@@ -191,7 +191,13 @@
 </head>
 <body>
 <div class="top-bar">
-  <h1>Smart Home Control</h1>
+  <button class="edit-button" id="menu">
+    <i class="">dashboard</i>
+  </button>
+  <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="menu">
+    <li th:each="dashboard : ${dashboards}" class="mdl-menu__item"><a th:href="'/dashboard/' + ${dashboard.id}" th:text="${dashboard.name}"></a></li>
+  </ul>
+  <h1 th:text="'dashboard: ' + ${dashboardName}"></h1>
   <div>
   <button class="edit-button" onclick="toggleEditButtons()">Edit</button>
   <button class="edit-button">Settings</button>

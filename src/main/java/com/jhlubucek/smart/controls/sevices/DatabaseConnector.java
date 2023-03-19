@@ -1,8 +1,10 @@
 package com.jhlubucek.smart.controls.sevices;
 
+import com.jhlubucek.smart.controls.entity.Dashboard;
 import com.jhlubucek.smart.controls.entity.Light;
 import com.jhlubucek.smart.controls.entity.Sensor;
 import com.jhlubucek.smart.controls.entity.SensorReading;
+import com.jhlubucek.smart.controls.entity.rowMapper.DashboardRowMapper;
 import com.jhlubucek.smart.controls.entity.rowMapper.LightRowMapper;
 import com.jhlubucek.smart.controls.entity.rowMapper.SensorReadingRowMapper;
 import com.jhlubucek.smart.controls.entity.rowMapper.SensorRowMapper;
@@ -24,6 +26,14 @@ public class DatabaseConnector {
 
     public List<Light> getAllLights(){
         List<Light> lights = jdbcTemplate.query("SELECT * FROM light", lightRowMapper);
+        return lights;
+    }
+
+    public List<Light> getAllLightsFromDashboard(int dashboardId){
+        List<Light> lights = jdbcTemplate.query(
+                "SELECT * FROM light WHERE dashboard_id = ?",
+                lightRowMapper,
+                dashboardId);
         return lights;
     }
 
@@ -54,7 +64,8 @@ public class DatabaseConnector {
     }
 
     public void saveLight(Light light) {
-        jdbcTemplate.update("INSERT INTO light (name, topic_state, topic_brightness, min_brightness, max_brightness, current_state, current_brightness) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO light (dashboard_id, name, topic_state, topic_brightness, min_brightness, max_brightness, current_state, current_brightness) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                light.getDashboardId(),
                 light.getName(),
                 light.getTopicState(),
                 light.getTopicBrightness(),
@@ -81,8 +92,13 @@ public class DatabaseConnector {
     }
 
     public List<Sensor> findAllSensors() {
-        String sql = "SELECT id, name, topic, unit FROM sensor";
+        String sql = "SELECT * FROM sensor";
         return jdbcTemplate.query(sql, new SensorRowMapper());
+    }
+
+    public List<Sensor> findAllSensorsFromDashboard(int dashboardId) {
+        String sql = "SELECT * FROM sensor WHERE dashboard_id = ?";
+        return jdbcTemplate.query(sql, new SensorRowMapper(), dashboardId);
     }
 
     public void deleteSensorById(int id) {
@@ -113,5 +129,16 @@ public class DatabaseConnector {
     public void saveReading(double value, int sensorId) {
         String sql = "INSERT INTO sensor_reading (sensor_id, value) VALUES (?, ?)";
         jdbcTemplate.update(sql, sensorId, value);
+    }
+
+    public List<Dashboard> findAllDashboards() {
+        String sql = "SELECT * FROM dashboard";
+        return jdbcTemplate.query(sql, new DashboardRowMapper());
+    }
+
+    public Dashboard getDashboardById(int id) {
+        String sql = "SELECT * FROM dashboard WHERE id = ?";
+        List<Dashboard> dashboards = jdbcTemplate.query(sql, new DashboardRowMapper(), id);
+        return dashboards.size() > 0 ? dashboards.get(0) : null;
     }
 }

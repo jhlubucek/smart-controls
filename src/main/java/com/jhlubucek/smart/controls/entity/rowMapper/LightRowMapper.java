@@ -12,6 +12,7 @@ public class LightRowMapper implements RowMapper<Light> {
     public Light mapRow(ResultSet rs, int rowNum) throws SQLException {
         Light light = new Light();
         light.setId(rs.getInt("id"));
+        light.setDashboardId(rs.getInt("dashboard_id"));
         light.setName(rs.getString("name"));
         light.setTopicState(rs.getString("topic_state"));
         light.setTopicBrightness(rs.getString("topic_brightness"));

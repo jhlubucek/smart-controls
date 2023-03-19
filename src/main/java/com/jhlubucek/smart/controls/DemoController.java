@@ -1,9 +1,6 @@
 package com.jhlubucek.smart.controls;
 
-import com.jhlubucek.smart.controls.entity.Greeting;
-import com.jhlubucek.smart.controls.entity.Light;
-import com.jhlubucek.smart.controls.entity.Sensor;
-import com.jhlubucek.smart.controls.entity.SensorReading;
+import com.jhlubucek.smart.controls.entity.*;
 import com.jhlubucek.smart.controls.sevices.DatabaseConnector;
 import com.jhlubucek.smart.controls.sevices.MqttService;
 import lombok.extern.slf4j.Slf4j;
@@ -52,26 +49,22 @@ public class DemoController
         return "deleted";
     };
 
-    @RequestMapping("/dashboard")
-    public ModelAndView index()
+    @RequestMapping("/dashboard/{id}" )
+    public ModelAndView index(@PathVariable("id") int id)
     {
         ModelAndView modelAndView = new ModelAndView();
+        List<Dashboard> dashboards = databaseConnector.findAllDashboards();
+        List<Light> lights = databaseConnector.getAllLightsFromDashboard(id);
+        Dashboard dashboard = databaseConnector.getDashboardById(id);
 
-        List<Light> lights = databaseConnector.getAllLights();
-
-
-
-
-        List<Sensor> sensors = databaseConnector.findAllSensors();
+        List<Sensor> sensors = databaseConnector.findAllSensorsFromDashboard(id);
         sensors.forEach(sensor -> sensor.setReadings(databaseConnector.getReadingsForLast24Hours(sensor.getId())));
-//        List<SensorReading> readings =
-//        sensors.add(new Sensor(1, "teplota-obyvak" ,"topic", "°C"));
-
         sensors.forEach(s -> s.getReadings().forEach(r -> System.out.println(r.getFormatedDate())));
 
         modelAndView.addObject("lights", lights);
+        modelAndView.addObject("dashboards", dashboards);
+        modelAndView.addObject("dashboardName", dashboard.getName());
         modelAndView.addObject("sensors", sensors);
-//        modelAndView.addObject("readings", readings);
         modelAndView.addObject("msg", "moje message");
         modelAndView.setViewName("mainPage");
         return modelAndView;
