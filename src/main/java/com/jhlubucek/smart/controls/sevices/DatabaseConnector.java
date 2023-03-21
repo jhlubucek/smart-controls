@@ -63,8 +63,14 @@ public class DatabaseConnector {
         return lights.size() > 0 ? lights.get(0) : null;
     }
 
+    public Sensor getSensorById(int id) {
+        String sql = "SELECT * FROM sensor WHERE id = ?";
+        List<Sensor> sensors = jdbcTemplate.query(sql, new SensorRowMapper(), id);
+        return sensors.size() > 0 ? sensors.get(0) : null;
+    }
+
     public void saveLight(Light light) {
-        jdbcTemplate.update("INSERT INTO light (dashboard_id, name, topic_state, topic_brightness, min_brightness, max_brightness, current_state, current_brightness) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO light (dashboard_id, name, topic_state, topic_brightness, min_brightness, max_brightness, current_state, current_brightness) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 light.getDashboardId(),
                 light.getName(),
                 light.getTopicState(),
@@ -73,6 +79,19 @@ public class DatabaseConnector {
                 light.getMaxBrightness(),
                 light.isCurrentState() ? 1 : 0,
                 light.getCurrentBrightness());
+    }
+
+    public void saveSensor(Sensor sensor) {
+        jdbcTemplate.update("INSERT INTO `sensor` (`name`, `topic`, `unit`, `dashboard_id`) VALUES (?, ?, ?, ?);",
+                sensor.getName(),
+                sensor.getTopic(),
+                sensor.getUnit(),
+                sensor.getDashboardId());
+    }
+
+    public void saveDashboard(Dashboard dashboard) {
+        jdbcTemplate.update("INSERT INTO `dashboard` (`name`) VALUES (?);",
+                dashboard.getName());
     }
 
     public void updateLight(Light light) {
@@ -87,8 +106,22 @@ public class DatabaseConnector {
                 light.getId());
     }
 
+    //this only works with low traffic
+    public int getLastInsertedId() {
+        Long lastInsertedId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        return lastInsertedId.intValue();
+    }
+
     public void deleteLight(int id) {
         jdbcTemplate.update("DELETE FROM light WHERE id = ?", id);
+    }
+
+    public void deleteSensor(int id) {
+        jdbcTemplate.update("DELETE FROM sensor WHERE id = ?", id);
+    }
+
+    public void deleteDashboard(int id) {
+        jdbcTemplate.update("DELETE FROM dashboard WHERE id = ? AND (SELECT COUNT(*) FROM dashboard) > 1", id);
     }
 
     public List<Sensor> findAllSensors() {
@@ -140,5 +173,16 @@ public class DatabaseConnector {
         String sql = "SELECT * FROM dashboard WHERE id = ?";
         List<Dashboard> dashboards = jdbcTemplate.query(sql, new DashboardRowMapper(), id);
         return dashboards.size() > 0 ? dashboards.get(0) : null;
+    }
+
+    public Dashboard getMainDashboard() {
+        String sql = "SELECT * FROM dashboard ORDER BY id ASC LIMIT 1";
+        List<Dashboard> dashboards = jdbcTemplate.query(sql, new DashboardRowMapper());
+        return dashboards.size() > 0 ? dashboards.get(0) : null;
+    }
+
+    public void updateDashboard(Dashboard dashboard) {
+        String sql = "UPDATE dashboard SET name = ? WHERE id = ?";
+        jdbcTemplate.update(sql, dashboard.getName(), dashboard.getId());
     }
 }

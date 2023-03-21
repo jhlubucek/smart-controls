@@ -49,8 +49,15 @@ public class DemoController
         return "deleted";
     };
 
+    @RequestMapping(value = "/sensor/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public  String deleteSensor(@PathVariable("id") int id) throws MqttException {
+        databaseConnector.deleteSensor(id);
+        return "deleted";
+    };
+
     @RequestMapping("/dashboard/{id}" )
-    public ModelAndView index(@PathVariable("id") int id)
+    public ModelAndView dashboard(@PathVariable("id") int id)
     {
         ModelAndView modelAndView = new ModelAndView();
         List<Dashboard> dashboards = databaseConnector.findAllDashboards();
@@ -63,18 +70,37 @@ public class DemoController
 
         modelAndView.addObject("lights", lights);
         modelAndView.addObject("dashboards", dashboards);
-        modelAndView.addObject("dashboardName", dashboard.getName());
+        modelAndView.addObject("dashboard", dashboard);
         modelAndView.addObject("sensors", sensors);
         modelAndView.addObject("msg", "moje message");
         modelAndView.setViewName("mainPage");
         return modelAndView;
     }
 
-    @RequestMapping("/add_light")
-    public String addLight(Model model)
+    @RequestMapping("/" )
+    public RedirectView index()
     {
-        model.addAttribute("light", new Light());
+        Dashboard dashboard = databaseConnector.getMainDashboard();
+        String url = String.format("dashboard/%d",dashboard.getId());
+        return new RedirectView(url);
+    }
+
+    @RequestMapping("/dashboard/{id}/add_light")
+    public String addLight(Model model, @PathVariable("id") int id)
+    {
+        Light light = new Light();
+        light.setDashboardId(id);
+        model.addAttribute("light", light);
         return "add_light_form";
+    }
+
+    @RequestMapping("/dashboard/{id}/add_sensor")
+    public String addSensor(Model model, @PathVariable("id") int id)
+    {
+        Sensor sensor = new Sensor();
+        sensor.setDashboardId(id);
+        model.addAttribute("sensor", sensor);
+        return "add_sensor_form";
     }
 
     @RequestMapping("/edit_light/{id}")
@@ -85,33 +111,79 @@ public class DemoController
         return "edit_light_form";
     }
 
+    @RequestMapping("/edit_sensor/{id}")
+    public String editSensor(Model model, @PathVariable("id") int id)
+    {
+        Sensor sensor = databaseConnector.getSensorById(id);
+        model.addAttribute("sensor", sensor);
+        return "edit_sensor_form";
+    }
+
     @PostMapping("/add_light_process_form")
     public RedirectView addLightSubmit(@ModelAttribute Light light, ModelMap model) {
         log.info("light: {}", light);
         databaseConnector.saveLight(light);
-        return new RedirectView("dashboard");
+        String redirectUrl = String.format("dashboard/%d",light.getDashboardId());
+        return new RedirectView(redirectUrl);
     }
 
     @PostMapping("/edit_light_process_form")
     public RedirectView editLightSubmit(@ModelAttribute Light light, ModelMap model) {
         log.info("light: {}", light);
         databaseConnector.updateLight(light);
-        return new RedirectView("dashboard");
+        String redirectUrl = String.format("dashboard/%d",light.getDashboardId());
+        return new RedirectView(redirectUrl);
     }
 
-    @GetMapping("/greeting")
-    public String greetingForm(Model model) {
-        Greeting greeting = new Greeting();
-        greeting.setContent("test");
-        model.addAttribute("greeting", greeting);
-        return "greeting";
+    @PostMapping("/add_sensor_process_form")
+    public RedirectView addSensorSubmit(@ModelAttribute Sensor sensor, ModelMap model) {
+        databaseConnector.saveSensor(sensor);
+        String redirectUrl = String.format("dashboard/%d",sensor.getDashboardId());
+        return new RedirectView(redirectUrl);
     }
 
-    @PostMapping("/greeting")
-    public ModelAndView greetingSubmit(@ModelAttribute Greeting greeting, ModelMap model) {
-        model.addAttribute("greeting", greeting);
-//        return "result";
-//        return new RedirectView("/dashboard");
-        return new ModelAndView("forward:/dashboard", model);
+    @PostMapping("/edit_sensor_process_form")
+    public RedirectView editSensorSubmit(@ModelAttribute Sensor sensor, ModelMap model) {
+        databaseConnector.updateSensor(sensor);
+        String redirectUrl = String.format("dashboard/%d",sensor.getDashboardId());
+        return new RedirectView(redirectUrl);
     }
+
+    @RequestMapping("/add_dashboard")
+    public String addSensor(Model model)
+    {
+        Dashboard dashboard = new Dashboard();
+        model.addAttribute("dashboard", dashboard);
+        return "add_dashboard_form";
+    }
+
+    @PostMapping("/add_dashboard_process_form")
+    public RedirectView addDashboardSubmit(@ModelAttribute Dashboard dashboard, ModelMap model) {
+        databaseConnector.saveDashboard(dashboard);
+        String redirectUrl = String.format("dashboard/%d",databaseConnector.getLastInsertedId());
+        return new RedirectView(redirectUrl);
+    }
+
+    @RequestMapping("/edit_dashboard/{id}")
+    public String editDashboard(Model model, @PathVariable("id") int id)
+    {
+        Dashboard dashboard = databaseConnector.getDashboardById(id);
+        model.addAttribute("dashboard", dashboard);
+        return "edit_dashboard_form";
+    }
+
+    @PostMapping("/edit_dashboard_process_form")
+    public RedirectView editDashboardSubmit(@ModelAttribute Dashboard dashboard, ModelMap model) {
+        databaseConnector.updateDashboard(dashboard);
+        String redirectUrl = String.format("dashboard/%d",dashboard.getId());
+        return new RedirectView(redirectUrl);
+    }
+
+
+    @RequestMapping(value = "/dashboard/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public  String deleteDashboard(@PathVariable("id") int id) throws MqttException {
+        databaseConnector.deleteDashboard(id);
+        return "deleted";
+    };
 }
