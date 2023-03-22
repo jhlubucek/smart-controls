@@ -280,7 +280,7 @@
   function callLightStateEndpoint(id) {
     const checkbox = document.getElementById('light-switch-'+id);
     const isChecked = checkbox.checked ? 1 : 0;
-    const endpointUrl = `http://localhost:8090/light/${id}/state/${isChecked}`;
+    const endpointUrl = `/light/${id}/state/${isChecked}`;
 
     fetch(endpointUrl,{
       method: "POST"})
@@ -293,7 +293,7 @@
 <script>
 
   function callLightDeleteEndpoint(id) {
-    const endpointUrl = `http://localhost:8090/light/${id}`;
+    const endpointUrl = `/light/${id}`;
 
     fetch(endpointUrl, {
       method: "DELETE"
@@ -306,7 +306,7 @@
   }
 
   function callSensorDeleteEndpoint(id) {
-    const endpointUrl = `http://localhost:8090/sensor/${id}`;
+    const endpointUrl = `/sensor/${id}`;
 
     fetch(endpointUrl, {
       method: "DELETE"
@@ -319,7 +319,7 @@
   }
 
   function callDashboardDeleteEndpoint(id) {
-    const endpointUrl = `http://localhost:8090/dashboard/${id}`;
+    const endpointUrl = `/dashboard/${id}`;
 
     fetch(endpointUrl, {
       method: "DELETE"
@@ -336,7 +336,7 @@
 <script>
 
   function callLightBrightnessEndpoint(id, value) {
-    const endpointUrl = `http://localhost:8090/light/${id}/brightness/${value}`;
+    const endpointUrl = `/light/${id}/brightness/${value}`;
 
     fetch(endpointUrl,{
       method: "POST"})
