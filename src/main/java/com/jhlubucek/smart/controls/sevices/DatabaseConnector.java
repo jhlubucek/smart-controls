@@ -155,7 +155,7 @@ public class DatabaseConnector {
 //        System.out.println(now.format(DateTimeFormatter.ISO_DATE_TIME));
 //        System.out.println(twentyFourHoursAgo.format(DateTimeFormatter.ISO_DATE_TIME));
 
-        String sql = "SELECT id, sensor_id, value, time FROM sensor_reading WHERE sensor_id = ? AND time > DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+        String sql = "SELECT id, sensor_id, value, time FROM sensor_reading WHERE sensor_id = ? LIMIT 100";
         return jdbcTemplate.query(sql, new SensorReadingRowMapper(), sensorId);
     }
 
